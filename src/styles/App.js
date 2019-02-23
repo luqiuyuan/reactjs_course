@@ -2,7 +2,6 @@ import background_image from "../assets/imgs/background.jpg";
 import {
     COLOR_THEME,
     COLOR_SILVER_WHITE,
-    COLOR_YAQING,
 } from '../constants';
 
 const styles = {
@@ -30,10 +29,13 @@ const styles = {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
+        // to prevent shrink when parent flex container doesnt have enough space
+        flexShrink: 0
     },
     header: {
-        fontSize: 50,
         color: COLOR_THEME,
+        marginTop: 46,
+        marginBottom: 32
     },
     button: {
         // self styles
@@ -66,14 +68,9 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
     },
-    footer_text: {
-        fontSize: 25,
-        color: COLOR_YAQING,
-    },
     footer_link: {
-        fontSize: 25,
         color: COLOR_THEME,
-        marginLeft: 10,
+        marginLeft: 10
     },
 };
 
