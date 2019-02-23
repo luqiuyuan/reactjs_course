@@ -37,7 +37,7 @@ export const existence = new Validation(
  */
 export const emailFormat = new Validation(
   'email',
-  text => !!text.match(/[\w-]+@([\w-]+\.)+[\w-]+/i),
+  text => !!text.match(/[\w-]+@([\w-]+)\.+[\w-]+/i),
   'invalid email'
 )
 
@@ -46,7 +46,7 @@ export const emailFormat = new Validation(
  */
 export const uppercase = new Validation(
   'uppercase',
-  text => !!text.match(/(?=.*[A-Z])/g),
+  text => !!text.match(/[A-Z]/),
   'at least one upper case'
 )
 
@@ -55,7 +55,7 @@ export const uppercase = new Validation(
  */
 export const lowercase = new Validation(
   'lowercase',
-  text => !!text.match(/(?=.*[a-z])/g),
+  text => !!text.match(/[a-z]/),
   'at least one lower case'
 )
 
