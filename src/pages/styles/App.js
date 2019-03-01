@@ -2,7 +2,7 @@ import background_image from "../assets/imgs/background.jpg";
 import {
     COLOR_THEME,
     COLOR_SILVER_WHITE,
-} from '../constants';
+} from '../../constants';
 
 const styles = {
     container: {

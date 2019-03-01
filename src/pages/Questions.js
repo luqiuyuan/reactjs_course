@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import { SERVER_ADDRESS } from '../constants';
 import Header from '../components/Header';
+import styles from './styles/Questions';
 
 export default class Questions extends Component {
 
@@ -14,13 +15,15 @@ export default class Questions extends Component {
         })
         
         request.then((response) => {
-            console.log(response);
+            this.setState({ questions: response.data.questions });
         });
     }
 
     render() {
         return (
-            <Header avatarSrc={require('../assets/imgs/avatar_default.jpg')} />
+            <div style={styles.container}>
+                <Header avatarSrc={require('../assets/imgs/avatar_default.jpg')} />
+            </div>
         );
     }
 
