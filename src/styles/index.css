@@ -11,6 +11,10 @@ p {
   padding: 0;
 }
 
+a {
+  text-decoration:none; 
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
@@ -52,7 +56,7 @@ button {
 
 @font-face {
   font-family: 'RussoOne';
-  src: url('../assets/fonts/Russo_One/RussoOne-Regular.ttf');
+  src: url('../assets/fonts/Russo_One/RussoOne-Regular.ttf') format('truetype');
 }
 
 @font-face {
