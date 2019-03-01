@@ -16,6 +16,9 @@ export default class Questions extends Component {
     }
 
     componentDidMount() {
+        // axios是网页端常用的网络访问组件，符合REST风格。这个组件的使用非常灵活，下面这句还可以写成
+        // const request = axios.get(SERVER_ADDRESS + '/questions');
+        // 更多axios的用法，可以参考它的文档：https://github.com/axios/axios
         const request = axios({
             method: 'get',
             url: SERVER_ADDRESS + '/questions',
@@ -33,6 +36,7 @@ export default class Questions extends Component {
                 <div style={styles.scrollable}>
                     <WhiteBlank h={20} />
                     {this.state.questions
+                    // 这里question列表的显示逻辑比较复杂，因此我们把questions列表分出来写成一个组件，从而使主组件更简洁。
                     ? <QuestionList questions={this.state.questions} />
                     : null
                     }
@@ -43,8 +47,10 @@ export default class Questions extends Component {
 
 }
 
+// 组件QuestionList只用在这一个页面，所以我们就不export了
 function QuestionList(props) {
     if (props.questions) {
+        // 这一段逻辑是在question中间插入分隔线，但最后一个question后面没有分隔线
         let arr_question = props.questions.map((question) => {
             return (
                 <Question
@@ -59,7 +65,6 @@ function QuestionList(props) {
             arr_mixed.push(<Seperator />);
         }
         arr_mixed.push(arr_question[arr_question.length - 1]);
-        arr_mixed = [...arr_mixed, ...arr_mixed, ...arr_mixed];
 
         return (
             <div style={styles.question_list_container}>
