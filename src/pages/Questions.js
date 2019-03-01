@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import { SERVER_ADDRESS } from '../constants';
+import Header from '../components/Header';
 
 export default class Questions extends Component {
 
@@ -18,7 +19,9 @@ export default class Questions extends Component {
     }
 
     render() {
-        return null;
+        return (
+            <Header avatarSrc={require('../assets/imgs/avatar_default.jpg')} />
+        );
     }
 
 }
