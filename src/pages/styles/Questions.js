@@ -16,6 +16,18 @@ const styles = {
         alignItems: 'center',
     },
 
+    scrollable: {
+        // styling self
+        flex: 1,
+        alignSelf: 'stretch',
+        overflow: 'auto',
+        // styling children
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+
     question_list_container: {
         // styling self
         width: 900,
@@ -27,6 +39,7 @@ const styles = {
         alignItems: 'center',
         paddingTop: 23,
         paddingBottom: 23,
+        flexShrink: 0,
     },
 
     question: {

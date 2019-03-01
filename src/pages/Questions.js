@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import styles from './styles/Questions';
 import Question from '../components/Question';
 import Seperator from '../components/Seperator';
+import WhiteBlank from '../components/WhiteBlank';
 
 export default class Questions extends Component {
     
@@ -29,10 +30,13 @@ export default class Questions extends Component {
         return (
             <div style={styles.container}>
                 <Header avatarSrc={require('../assets/imgs/avatar_default.jpg')} />
-                {this.state.questions
-                ? <QuestionList questions={this.state.questions} />
-                : null
-                }
+                <div style={styles.scrollable}>
+                    <WhiteBlank h={20} />
+                    {this.state.questions
+                    ? <QuestionList questions={this.state.questions} />
+                    : null
+                    }
+                </div>
             </div>
         );
     }
@@ -55,6 +59,7 @@ function QuestionList(props) {
             arr_mixed.push(<Seperator />);
         }
         arr_mixed.push(arr_question[arr_question.length - 1]);
+        arr_mixed = [...arr_mixed, ...arr_mixed, ...arr_mixed];
 
         return (
             <div style={styles.question_list_container}>
