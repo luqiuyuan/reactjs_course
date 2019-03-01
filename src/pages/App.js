@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import styles from './styles/App';
-import TextInput from './components/TextInput';
-import Button from './components/Button';
-import WhiteBlank from './components/WhiteBlank';
-import Text from './components/Text';
+import styles from '../styles/App';
+import TextInput from '../components/TextInput';
+import Button from '../components/Button';
+import WhiteBlank from '../components/WhiteBlank';
+import Text from '../components/Text';
 import validate, {
   existence,
   emailFormat,
@@ -11,7 +11,7 @@ import validate, {
   uppercase,
   lowercase,
   nameLength
-} from './utils/validations';
+} from '../utils/validations';
 
 const VALIDATION_CONFIG = {
   email: [existence, emailFormat],
