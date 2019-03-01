@@ -6,6 +6,7 @@ import { SERVER_ADDRESS } from '../constants';
 import Header from '../components/Header';
 import styles from './styles/Questions';
 import Question from '../components/Question';
+import Seperator from '../components/Seperator';
 
 export default class Questions extends Component {
     
@@ -40,17 +41,24 @@ export default class Questions extends Component {
 
 function QuestionList(props) {
     if (props.questions) {
+        let arr_question = props.questions.map((question) => {
+            return (
+                <Question
+                    title={question.title}
+                    content={question.content}
+                    style={styles.question} />
+            );
+        });
+        let arr_mixed = [];
+        for (let i = 0; i < arr_question.length - 1; i++) {
+            arr_mixed.push(arr_question[i]);
+            arr_mixed.push(<Seperator />);
+        }
+        arr_mixed.push(arr_question[arr_question.length - 1]);
+
         return (
             <div style={styles.question_list_container}>
-            {
-                props.questions.map((question) => {
-                    return (
-                        <Question
-                            title={question.title}
-                            content={question.content} />
-                    );
-                })
-            }
+                {arr_mixed}
             </div>
         );
     } else {

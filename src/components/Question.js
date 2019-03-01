@@ -12,7 +12,7 @@ export default function Question(props) {
     } = props;
 
     return (
-        <div styles={{...styles.container, ...style}}>
+        <div style={{...styles.container, ...style}}>
             <Text type='Roboto-Medium' >{title}</Text>
             <WhiteBlank h={8} />
             <Text>{content}</Text>

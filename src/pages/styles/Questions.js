@@ -25,6 +25,13 @@ const styles = {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
+        paddingTop: 23,
+        paddingBottom: 23,
+    },
+
+    question: {
+        marginLeft: 29,
+        marginRight: 29,
     },
 
 };
