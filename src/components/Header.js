@@ -9,7 +9,8 @@ export default function Header(props) {
       <Text type='l RussoOne' style={styles.logo}>BIG FISH</Text>
       <img
         style={styles.avatar}
-        src={props.avatarSrc} />
+        src={props.avatarSrc}
+        alt="avatar" />
     </div>
   );
 }

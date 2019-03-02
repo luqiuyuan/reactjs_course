@@ -54,6 +54,7 @@ function QuestionList(props) {
     let arr_question = props.questions.map((question) => {
       return (
         <Question
+          key={"question_" + question.id}
           title={question.title}
           content={question.content}
           style={styles.question} />
@@ -62,7 +63,7 @@ function QuestionList(props) {
     let arr_mixed = [];
     for (let i = 0; i < arr_question.length - 1; i++) {
       arr_mixed.push(arr_question[i]);
-      arr_mixed.push(<Seperator />);
+      arr_mixed.push(<Seperator key={"seperator_" + i} />);
     }
     arr_mixed.push(arr_question[arr_question.length - 1]);
 
