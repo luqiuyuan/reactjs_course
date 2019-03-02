@@ -1,21 +1,21 @@
 import {
-    COLOR_SILVER_WHITE,
+  COLOR_SILVER_WHITE,
 } from '../../constants';
 
 const styles = {
 
-    container: {
-        alignSelf: 'stretch',
-    },
+  container: {
+    alignSelf: 'stretch',
+  },
 
-    line: {
-        borderBottom: '1px solid ' + COLOR_SILVER_WHITE,
-    },
+  line: {
+    borderBottom: '1px solid ' + COLOR_SILVER_WHITE,
+  },
 
-    margin: {
-        marginTop: 21,
-        marginBottom: 21,
-    },
+  margin: {
+    marginTop: 21,
+    marginBottom: 21,
+  },
 
 };
 
