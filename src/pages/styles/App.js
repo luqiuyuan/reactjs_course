@@ -1,4 +1,4 @@
-import background_image from "../assets/imgs/background.jpg";
+import background_image from "../../assets/imgs/background.jpg";
 import {
     COLOR_THEME,
     COLOR_SILVER_WHITE,
