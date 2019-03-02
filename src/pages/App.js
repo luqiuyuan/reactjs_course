@@ -6,12 +6,7 @@ import Questions from './Questions';
 class App extends Component {
   render() {
     return (
-      <BrowserRouter>
-        <Switch>
-          <Route path="/questions" component={Questions}/>
-          <Route path={['/', '/signin', '/login']} component={SignInSignUp}/>
-        </Switch>
-      </BrowserRouter>
+      <Questions />
     );
   }
 
