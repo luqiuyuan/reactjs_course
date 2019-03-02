@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
-import styles from '../styles/App';
+import styles from './styles/App';
 import TextInput from '../components/TextInput';
 import Button from '../components/Button';
 import WhiteBlank from '../components/WhiteBlank';
