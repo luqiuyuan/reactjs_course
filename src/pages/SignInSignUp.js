@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom';
+import React, { Component, Fragment } from 'react';
+import { Link, Route, Switch } from 'react-router-dom';
 import styles from './styles/App';
 import TextInput from '../components/TextInput';
 import Button from '../components/Button';
@@ -22,36 +22,102 @@ const VALIDATION_CONFIG = {
 
 class SignInSignUp extends Component {
 
-  // init error messages for each input
-  state = {
-    email_err: '',
-    password_err: '',
-    name_err: ''
+  signup = (input_values) => {
+    console.log(input_values)
   }
 
-  // init an object to save input values
-  input_values = {
-    email: '',
-    password: '',
-    name: ''
+  login = (input_values) => {
+    console.log(input_values)
   }
 
-  // trigger when user click login button
+  render() {
+    return (
+      <div style={styles.container}>
+
+        <div style={styles.panel}>
+
+          <Text type="xl RussoOne" style={styles.header}>BIG FISH</Text>
+          <Switch>
+            <Route path="/signup" render={() => <SignUpForm onSubmit={this.signup} />} />
+            <Route path="/" render={() => <LoginForm onSubmit={this.login} />} />
+          </Switch>
+        </div>
+
+      </div>
+    );
+  }
+
+
+
+}
+
+export default SignInSignUp;
+
+function SignUpForm({ onSubmit }) {
+  return <BaseForm
+    inputs={[
+      { id: 'email', placeholder: 'Email', validations: VALIDATION_CONFIG.email },
+      { id: 'password', placeholder: 'Password', validations: VALIDATION_CONFIG.password, type: 'password' },
+      { id: 'name', placeholder: 'Name', validations: VALIDATION_CONFIG.name }
+    ]}
+    btnLabel="Signup"
+    footerText="Already have an account?"
+    link={{ displayName: 'Login', path: '/login' }}
+    onSubmit={onSubmit}
+  />
+}
+
+function LoginForm({ onSubmit }) {
+  return <BaseForm
+    inputs={[
+      { id: 'email', placeholder: 'Email', validations: VALIDATION_CONFIG.email },
+      { id: 'password', placeholder: 'Password', validations: VALIDATION_CONFIG.password, type: 'password' },
+    ]}
+    btnLabel="Login"
+    footerText="Don't have an account?"
+    link={{ displayName: 'Signup', path: '/signup' }}
+    onSubmit={onSubmit}
+  />
+}
+
+
+// 一个可行的解决方案，
+// 主要的思想是：进一步抽象组件，把表单验证、提交提炼为一个较为通用的组件
+
+class BaseForm extends Component {
+  static defaultProps = {
+    inputs: [],
+    btnLabel: 'Confirm',
+    footerText: 'default footer text',
+    footerLink: { path: '/login', displayName: 'Login' },
+    onSubmit: () => { }
+  }
+
+  constructor(props) {
+    super(props)
+    // init state to save error msgs
+    this.state = {}
+    this.input_values = {}
+    props.inputs.forEach(input => {
+      this.state[input.id + '_err'] = ''
+      this.input_values[input.id] = ''
+    })
+  }
+
   onSubmit = () => {
     // validate each input, get error message
-    const email_err = this._validate('email');
-    const password_err = this._validate('password');
-    const name_err = this._validate('name');
+    let _errMsgs = {}
+    this.props.inputs.forEach(({ validations, id }) => {
+      if (validations) {
+        _errMsgs[id + '_err'] = validate(validations, this.input_values[id])
+      }
+    })
 
     // only try to setState when there are validation errors
-    if (email_err || password_err || name_err) {
-      this.setState({
-        email_err,
-        password_err,
-        name_err
-      })
+    if (this._checkErr(_errMsgs)) {
+      this.setState(_errMsgs)
     } else {
-      console.log('submit form data', this.input_values)
+      this.props.onSubmit(this.input_values)
     }
   }
 
@@ -74,69 +140,45 @@ class SignInSignUp extends Component {
     }
   }
 
-  // clear input and its error message when switch page
-  clearInput = () => {
-    this.setState({
-      email_err: '',
-      password_err: '',
-      name_err: ''
-    })
-  }
-
   render() {
     const {
-      email_err,
-      password_err,
-      name_err
-    } = this.state
-
-    const {
-      location
-    } = this.props;
-
+      inputs,
+      footerText,
+      link: {
+        path,
+        displayName
+      },
+      btnLabel
+    } = this.props
     return (
-      <div style={styles.container}>
+      <>
+        {inputs.map(({ id, validations, ...rest }, index) => <Fragment key={id}>
+          <TextInput id={id} errMsg={this.state[id + '_err']} onBlur={this.onBlur} onChange={this.onChange} {...rest} />
+          {index !== inputs.length - 1 && <WhiteBlank h={8} />}
+        </Fragment>)}
 
-        <div style={styles.panel}>
+        <WhiteBlank h={73} />
 
-          <Text type="xl RussoOne" style={styles.header}>BIG FISH</Text>
+        <Button label={btnLabel} onClick={this.onSubmit} />
 
-          <TextInput id="email" errMsg={email_err} onBlur={this.onBlur} onChange={this.onChange} placeholder="Email" />
-          <WhiteBlank h={8} />
-          <TextInput id="password" errMsg={password_err} onBlur={this.onBlur} onChange={this.onChange} placeholder="Password" />
+        <div style={styles.placeholder} />
 
-          <Route path="/signup" render={() => <>
-            <WhiteBlank h={8} />
-            <TextInput id="name" errMsg={name_err} onBlur={this.onBlur} onChange={this.onChange} placeholder="Name" />
-          </>} />
-
-          <WhiteBlank h={73} />
-
-          <Button label={location.pathname === '/signup' ? 'Signup' : 'Login'} onClick={this.onSubmit} />
-
-          <div style={styles.placeholder} />
-
-          <div style={styles.footer}>
-            <Route path="/signup" render={() => <>
-              <Text>Already have an account?</Text>
-              <Link onClick={this.clearInput} to="/login"><Text style={styles.footer_link}>Login</Text></Link>
-            </>} />
-            <Route exact path={['/login', '/']} render={() => <>
-              <Text>Don’t have an account?</Text>
-              <Link onClick={this.clearInput} to="/signup"><Text style={styles.footer_link}>Signup</Text></Link>
-            </>} />
-          </div>
-
+        <div style={styles.footer}>
+          <Text>{footerText}</Text>
+          <Link to={path}><Text style={styles.footer_link}>{displayName}</Text></Link>
         </div>
+      </>
 
-      </div>
-    );
+    )
   }
 
-  // validate function will return the error message when validation fails
-  // otherwise, will return undefined
-  _validate = id => validate(VALIDATION_CONFIG[id], this.input_values[id])
+  // check if there is a error message
+  _checkErr = obj => {
+    // traverse the obj, if there is any valid error message, return true
+    for (let val in obj) {
+      if (obj[val]) return true
+    }
+    return false
+  }
 
 }
-
-export default SignInSignUp;
