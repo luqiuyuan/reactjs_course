@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch, Redirect } from 'react-router-dom';
+import axios from 'axios';
 import styles from './styles/App';
 import TextInput from '../components/TextInput';
 import Button from '../components/Button';
@@ -13,22 +14,18 @@ import validate, {
   lowercase,
   nameLength
 } from '../utils/validations';
+import { SERVER_ADDRESS } from '../constants';
+
+
 
 const VALIDATION_CONFIG = {
   email: [existence, emailFormat],
   password: [existence, passwordLength, uppercase, lowercase],
-  name: [nameLength]
+  name: [nameLength],
+  login: [existence],
 }
 
 class SignInSignUp extends Component {
-
-  signup = (input_values) => {
-    console.log(input_values)
-  }
-
-  login = (input_values) => {
-    console.log(input_values)
-  }
 
   render() {
     return (
@@ -38,8 +35,8 @@ class SignInSignUp extends Component {
 
           <Text type="xl RussoOne" style={styles.header}>BIG FISH</Text>
           <Switch>
-            <Route path="/signup" render={() => <SignUpForm onSubmit={this.signup} />} />
-            <Route path="/" render={() => <LoginForm onSubmit={this.login} />} />
+            <Route path="/signup" render={() => <SignUpForm />} />
+            <Route path="/" render={() => <LoginForm />} />
           </Switch>
         </div>
 
@@ -53,31 +50,85 @@ class SignInSignUp extends Component {
 
 export default SignInSignUp;
 
-function SignUpForm({ onSubmit }) {
-  return <BaseForm
-    inputs={[
-      { id: 'email', placeholder: 'Email', validations: VALIDATION_CONFIG.email },
-      { id: 'password', placeholder: 'Password', validations: VALIDATION_CONFIG.password, type: 'password' },
-      { id: 'name', placeholder: 'Name', validations: VALIDATION_CONFIG.name }
-    ]}
-    btnLabel="Signup"
-    footerText="Already have an account?"
-    link={{ displayName: 'Login', path: '/login' }}
-    onSubmit={onSubmit}
-  />
+class SignUpForm extends Component {
+
+  state = {
+    redirect_to_login: false,
+  }
+
+  render() {
+    if (this.state.redirect_to_login) return <Redirect to={{pathname: "/login"}} />
+
+    return <BaseForm
+      inputs={[
+        { id: 'email', placeholder: 'Email', validations: VALIDATION_CONFIG.email },
+        { id: 'password', placeholder: 'Password', validations: VALIDATION_CONFIG.password, type: 'password' },
+        { id: 'name', placeholder: 'Name', validations: VALIDATION_CONFIG.name }
+      ]}
+      btnLabel="Signup"
+      footerText="Already have an account?"
+      link={{ displayName: 'Login', path: '/login' }}
+      onSubmit={this.onSubmit}
+    />
+  }
+
+  onSubmit = (input_values) => {
+    let request = axios({
+      method: 'post',
+      url: SERVER_ADDRESS + '/users',
+      data: {
+        user: {
+          email: input_values['email'],
+          password: input_values['password'],
+          name: input_values['name'],
+        }
+      },
+      validateStatus: function (status) {
+        return (status >= 200 && status < 300) || (status >= 400 && status < 500);
+      },
+    });
+
+    request.then((response) => {
+      if (response.status == 201) {
+        alert("Congradulations! Your registration was successful!");
+        this.setState({ redirect_to_login: true })
+      } else if (response.status == 400) {
+        let first_error = response.data.errors[0];
+        if (first_error.code == 'duplicated_field') {
+          alert("This email has already been registered.");
+        } else {
+          alert("Something expected happened T_T Please contact admin@bigfish.ca");
+        }
+      } else {
+        alert("Something expected happened T_T Please contact admin@bigfish.ca");
+      }
+    })
+    .catch((error) => {
+      alert("Something expected happened T_T Please contact admin@bigfish.ca");
+    });
+  }
+
 }
 
-function LoginForm({ onSubmit }) {
-  return <BaseForm
-    inputs={[
-      { id: 'email', placeholder: 'Email', validations: VALIDATION_CONFIG.email },
-      { id: 'password', placeholder: 'Password', validations: VALIDATION_CONFIG.password, type: 'password' },
-    ]}
-    btnLabel="Login"
-    footerText="Don't have an account?"
-    link={{ displayName: 'Signup', path: '/signup' }}
-    onSubmit={onSubmit}
-  />
+class LoginForm extends Component {
+
+  render() {
+    return <BaseForm
+      inputs={[
+        { id: 'email', placeholder: 'Email', validations: VALIDATION_CONFIG.login },
+        { id: 'password', placeholder: 'Password', validations: VALIDATION_CONFIG.login, type: 'password' },
+      ]}
+      btnLabel="Login"
+      footerText="Don't have an account?"
+      link={{ displayName: 'Signup', path: '/signup' }}
+      onSubmit={this.onSubmit}
+    />
+  }
+
+  onSubmit = () => {
+    console.log("login");
+  }
+  
 }
 
 
