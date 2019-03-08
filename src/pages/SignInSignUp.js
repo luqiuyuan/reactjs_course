@@ -15,6 +15,7 @@ import validate, {
   nameLength
 } from '../utils/validations';
 import { SERVER_ADDRESS } from '../constants';
+import Questions from './Questions';
 
 
 
@@ -97,14 +98,14 @@ class SignUpForm extends Component {
         if (first_error.code == 'duplicated_field') {
           alert("This email has already been registered.");
         } else {
-          alert("Something expected happened T_T Please contact admin@bigfish.ca");
+          alert("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
         }
       } else {
-        alert("Something expected happened T_T Please contact admin@bigfish.ca");
+        alert("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
       }
     })
     .catch((error) => {
-      alert("Something expected happened T_T Please contact admin@bigfish.ca");
+      alert("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
     });
   }
 
@@ -112,7 +113,13 @@ class SignUpForm extends Component {
 
 class LoginForm extends Component {
 
+  state = {
+    redirect_to_questions: false,
+  }
+
   render() {
+    if (this.state.redirect_to_questions) return <Redirect to={{pathname: '/questions'}} />
+
     return <BaseForm
       inputs={[
         { id: 'email', placeholder: 'Email', validations: VALIDATION_CONFIG.login },
@@ -125,8 +132,38 @@ class LoginForm extends Component {
     />
   }
 
-  onSubmit = () => {
-    console.log("login");
+  onSubmit = (input_values) => {
+    let request = axios({
+      method: 'post',
+      url: SERVER_ADDRESS + '/user_tokens',
+      data: {
+        credential: {
+          email: input_values['email'],
+          password: input_values['password'],
+        }
+      },
+      validateStatus: function (status) {
+        return (status >= 200 && status < 300) || (status >= 400 && status < 500);
+      },
+    });
+
+    request.then((response) => {
+      if (response.status == 201) {
+        this.setState({ redirect_to_questions: true });
+      } else if (response.status == 400) {
+        let first_error = response.data.errors[0];
+        if (first_error.code == 'invalid_credential') {
+          alert("Email or password is incorrect! Please try again");
+        } else {
+          alert("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
+        }
+      } else {
+        alert("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
+      }
+    })
+    .catch((error) => {
+      alert("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
+    });
   }
   
 }
