@@ -37,7 +37,7 @@ class SignInSignUp extends Component {
           <Text type="xl RussoOne" style={styles.header}>BIG FISH</Text>
           <Switch>
             <Route path="/signup" render={() => <SignUpForm />} />
-            <Route path="/" render={() => <LoginForm />} />
+            <Route path="/" render={() => <LoginForm onLogin={this.props.onLogin} />} />
           </Switch>
         </div>
 
@@ -149,6 +149,13 @@ class LoginForm extends Component {
 
     request.then((response) => {
       if (response.status == 201) {
+        let {
+          user_id,
+          key,
+          expire_in,
+        } = response.data.user_token;
+        this.props.onLogin && this.props.onLogin({ user_id, key, expire_in });
+
         this.setState({ redirect_to_questions: true });
       } else if (response.status == 400) {
         let first_error = response.data.errors[0];
