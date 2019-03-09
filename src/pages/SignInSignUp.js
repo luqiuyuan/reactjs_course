@@ -13,6 +13,7 @@ import validate, {
   lowercase,
   nameLength
 } from '../utils/validations';
+import Popup from '../modules/Popup'
 
 const VALIDATION_CONFIG = {
   email: [existence, emailFormat],
@@ -24,6 +25,10 @@ class SignInSignUp extends Component {
 
   signup = (input_values) => {
     console.log(input_values)
+    Popup.open({
+      type:'warn',
+      message: '123123'
+    })
   }
 
   login = (input_values) => {
@@ -96,12 +101,13 @@ class BaseForm extends Component {
   constructor(props) {
     super(props)
     // init state to save error msgs
-    this.state = {}
+    let _state = {}
     this.input_values = {}
     props.inputs.forEach(input => {
-      this.state[input.id + '_err'] = ''
+      _state[input.id + '_err'] = ''
       this.input_values[input.id] = ''
     })
+    this.state = _state
   }
 
   onSubmit = () => {

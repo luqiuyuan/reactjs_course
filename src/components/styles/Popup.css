@@ -1,0 +1,38 @@
+.popup-overlay {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.warn {
+  background-color: rgba(216, 216, 216, 0.5);
+}
+
+.msg-box {
+  display: flex;
+  width: 919px;
+  height: 147px;
+  background-color: white;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.msg-box>p {
+  flex: 1
+}
+
+.msg-box>.icon {
+  align-self: flex-end;
+  height: 50px;
+  width: 50px;
+  background-color: #E9E7EF;
+  border-radius: 50%;
+  padding: 8px;
+}
