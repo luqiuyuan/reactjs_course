@@ -35,7 +35,7 @@ class Questions extends Component {
           }
         </div>
         <FloatButton />
-        <CreateQuestion />
+        <CreateQuestionContainer userToken={this.props.userToken} />
       </div>
     );
   }
@@ -135,6 +135,12 @@ class CreateQuestion extends Component {
     if (this._checkErr(_errMsgs)) {
       this.setState(_errMsgs)
     } else {
+      this.props.create
+        && this.props.create(
+          this.input_values['title'],
+          this.input_values['content'],
+          this.props.userToken
+        );
     }
   }
 
@@ -167,3 +173,8 @@ class CreateQuestion extends Component {
   }
 
 }
+
+let mapDispatchCreateQuestion = (dispatch) => ({
+  create: (title, content, user_token) => dispatch.questions.create({ title, content, user_token }),
+});
+const CreateQuestionContainer = connect(null, mapDispatchCreateQuestion)(CreateQuestion);

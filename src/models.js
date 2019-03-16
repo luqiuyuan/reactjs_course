@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { SERVER_ADDRESS } from './constants';
+import { create } from 'domain';
+import Popup from './modules/Popup'
 
 export const questions = {
   state: [],
@@ -20,6 +22,40 @@ export const questions = {
 
       request.then((response) => {
         dispatch.questions.set(response.data.questions);
+      });
+    },
+    create(payload, state) {
+      let request = axios({
+        method: 'post',
+        url: SERVER_ADDRESS + '/questions',
+        headers: {
+          'Authorization': JSON.stringify({
+            user_token: {
+              user_id: payload.user_token.user_id,
+              key: payload.user_token.key,
+            }
+          }),
+        },
+        data: {
+          question: {
+            title: payload.title,
+            content: payload.content,
+          },
+        },
+        validateStatus: function (status) {
+          return (status >= 200 && status < 300) || (status >= 400 && status < 500);
+        },
+      });
+  
+      request.then((response) => {
+        if (response.status == 201) {
+          
+        } else {
+          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
+        }
+      })
+      .catch((error) => {
+        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
       });
     }
   }),
