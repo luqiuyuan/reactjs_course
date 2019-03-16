@@ -96,3 +96,39 @@ export const users = {
     }
   })
 };
+
+export const questions = {
+  state: [],
+  reducers: {
+    set(state, payload) {
+      return payload;
+    }
+  },
+  effects: (dispatch) => ({
+    getAll(payload, state) {
+      // axios是网页端常用的网络访问组件，符合REST风格。这个组件的使用非常灵活，下面这句还可以写成
+      // const request = axios.get(SERVER_ADDRESS + '/questions');
+      // 更多axios的用法，可以参考它的文档：https://github.com/axios/axios
+      const request = axios({
+        method: 'get',
+        url: SERVER_ADDRESS + '/questions',
+        validateStatus: function (status) {
+          return (status >= 200 && status < 300) || (status >= 400 && status < 500);
+        },
+      });
+
+      request.then((response) => {
+        if (response.status == 200) {
+          dispatch.questions.set(response.data.questions);
+        } else if (response.status == 404) {
+          dispatch.questions.set([]);
+        } else {
+          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
+        }
+      })
+      .catch((error) => {
+        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
+      });;
+    }
+  }),
+};

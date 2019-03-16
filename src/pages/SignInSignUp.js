@@ -14,8 +14,6 @@ import validate, {
   lowercase,
   nameLength
 } from '../utils/validations';
-import Popup from '../modules/Popup'
-import { SERVER_ADDRESS } from '../constants';
 import { connect } from "react-redux";
 
 const VALIDATION_CONFIG = {
