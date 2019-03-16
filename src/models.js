@@ -11,13 +11,29 @@ export const user_token = {
   },
   effects: (dispatch) => ({
     create(payload, state) {
+      // networking stuff here
+    }
+  }),
+};
+
+export const user = {
+  state: {},
+  reducers: {
+    add(state, payload) {
+      let state_new = {...state, [payload.id]: payload};
+      return state_new;
+    }
+  },
+  effects: (dispatch) => ({
+    create(payload, state) {
       let request = axios({
         method: 'post',
-        url: SERVER_ADDRESS + '/user_tokens',
+        url: SERVER_ADDRESS + '/users',
         data: {
-          credential: {
+          user: {
             email: payload.email,
             password: payload.password,
+            name: payload.name,
           }
         },
         validateStatus: function (status) {
@@ -27,13 +43,13 @@ export const user_token = {
   
       request.then((response) => {
         if (response.status == 201) {
-          dispatch.user_token.set(response.data.user_token);
-  
+          Popup.warn("Congradulations! Your registration was successful!");
+          
           payload && payload.success_callback && payload.success_callback();
         } else if (response.status == 400) {
           let first_error = response.data.errors[0];
-          if (first_error.code == 'invalid_credential') {
-            Popup.warn("Email or password is incorrect! Please try again");
+          if (first_error.code == 'duplicated_field') {
+            Popup.warn("This email has already been registered.");
           } else {
             Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
           }
@@ -45,5 +61,5 @@ export const user_token = {
         Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
       });
     }
-  }),
+  })
 };

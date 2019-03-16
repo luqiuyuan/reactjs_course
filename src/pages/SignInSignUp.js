@@ -35,7 +35,7 @@ class SignInSignUp extends Component {
 
           <Text type="xl RussoOne" style={styles.header}>BIG FISH</Text>
           <Switch>
-            <Route path="/signup" render={() => <SignUpForm />} />
+            <Route path="/signup" render={() => <SignUpFormContainer />} />
             <Route path="/" render={() => <SignInFormContainer />} />
           </Switch>
         </div>
@@ -73,42 +73,15 @@ export class SignUpForm extends Component {
   }
 
   onSubmit = (input_values) => {
-    let request = axios({
-      method: 'post',
-      url: SERVER_ADDRESS + '/users',
-      data: {
-        user: {
-          email: input_values['email'],
-          password: input_values['password'],
-          name: input_values['name'],
-        }
-      },
-      validateStatus: function (status) {
-        return (status >= 200 && status < 300) || (status >= 400 && status < 500);
-      },
-    });
-
-    request.then((response) => {
-      if (response.status == 201) {
-        Popup.warn("Congradulations! Your registration was successful!");
-        this.setState({ redirect_to_login: true })
-      } else if (response.status == 400) {
-        let first_error = response.data.errors[0];
-        if (first_error.code == 'duplicated_field') {
-          Popup.warn("This email has already been registered.");
-        } else {
-          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
-        }
-      } else {
-        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
-      }
-    })
-    .catch((error) => {
-      Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
-    });
+    this.props.signup && this.props.signup(input_values['email'], input_values['password'], input_values['name'], () => this.setState({ redirect_to_login: true }));
   }
 
 }
+
+const mapDispatchSignUpForm = ({ users: { create } }) => ({
+  signup: (email, password, name, successful_callback) => create({ email, password, name, successful_callback }),
+});
+const SignUpFormContainer = connect(null, mapDispatchSignUpForm)(SignUpForm);
 
 export class SignInForm extends Component {
 
@@ -137,10 +110,10 @@ export class SignInForm extends Component {
   
 }
 
-const mapDispatch = ({ user_token: { create } }) => ({
+const mapDispatchSignInForm = ({ user_token: { create } }) => ({
   login: (email, password, successful_callback) => create({ email, password, successful_callback }),
 });
-const SignInFormContainer = connect(null, mapDispatch)(SignInForm);
+const SignInFormContainer = connect(null, mapDispatchSignInForm)(SignInForm);
 
 
 // 一个可行的解决方案，
