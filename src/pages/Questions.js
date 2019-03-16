@@ -1,32 +1,18 @@
 import React, { Component } from 'react';
 
-import axios from 'axios';
-
-import { SERVER_ADDRESS } from '../constants';
 import Header from '../components/Header';
 import styles from './styles/Questions';
 import Question from '../components/Question';
 import Seperator from '../components/Seperator';
 import WhiteBlank from '../components/WhiteBlank';
+import { connect } from 'react-redux';
 
-export default class Questions extends Component {
-
-  state = {
-    questions: null,
-  }
+class Questions extends Component {
 
   componentDidMount() {
-    // axios是网页端常用的网络访问组件，符合REST风格。这个组件的使用非常灵活，下面这句还可以写成
-    // const request = axios.get(SERVER_ADDRESS + '/questions');
-    // 更多axios的用法，可以参考它的文档：https://github.com/axios/axios
-    const request = axios({
-      method: 'get',
-      url: SERVER_ADDRESS + '/questions',
-    })
-
-    request.then((response) => {
-      this.setState({ questions: response.data.questions });
-    });
+    if (this.props.questions.length == 0) {
+      this.props.getAllQuestions();
+    }
   }
 
   render() {
@@ -35,9 +21,9 @@ export default class Questions extends Component {
         <Header avatarSrc={require('../assets/imgs/avatar_default.jpg')} />
         <div style={styles.scrollable}>
           <WhiteBlank h={20} />
-          {this.state.questions
+          {this.props.questions
             // 这里question列表的显示逻辑比较复杂，因此我们把questions列表分出来写成一个组件，从而使主组件更简洁。
-            ? <QuestionList questions={this.state.questions} />
+            ? <QuestionList questions={this.props.questions} />
             : null
           }
         </div>
@@ -46,6 +32,14 @@ export default class Questions extends Component {
   }
 
 }
+
+let mapState = state => ({
+  questions: state.questions,
+});
+let mapDispatch = (dispatch) => ({
+  getAllQuestions: () => dispatch.questions.getAll(),
+});
+export default connect(mapState, mapDispatch)(Questions);
 
 // 组件QuestionList只用在这一个页面，所以我们就不export了
 function QuestionList(props) {
