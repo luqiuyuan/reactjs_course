@@ -132,6 +132,7 @@ export const questions = {
     },
     create(payload, state) {
       if (!state.user_token) {
+        Popup.warn("You have not logged in");
         return;
       }
 
