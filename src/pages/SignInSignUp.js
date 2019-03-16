@@ -111,7 +111,7 @@ export class SignInForm extends Component {
 }
 
 const mapDispatchSignInForm = ({ user_token: { create } }) => ({
-  login: (email, password, successful_callback) => create({ email, password, successful_callback }),
+  login: (email, password, success_callback) => create({ email, password, success_callback }),
 });
 const SignInFormContainer = connect(null, mapDispatchSignInForm)(SignInForm);
 
