@@ -8,6 +8,7 @@ import styles from './styles/Questions';
 import Question from '../components/Question';
 import Seperator from '../components/Seperator';
 import WhiteBlank from '../components/WhiteBlank';
+import { FloatButton } from '../components/Button';
 
 export default class Questions extends Component {
 
@@ -41,6 +42,7 @@ export default class Questions extends Component {
             : null
           }
         </div>
+        <FloatButton style={styles.button_add} />
       </div>
     );
   }

@@ -47,6 +47,12 @@ const styles = {
     marginRight: 29,
   },
 
+  button_add: {
+    position: 'absolute',
+    right: 25,
+    bottom: 25,
+  },
+
 };
 
 export default styles;

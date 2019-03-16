@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-
 import styles from './styles/Button';
+import './styles/Button.css';
 
 export default class Button extends Component {
 
@@ -25,6 +25,24 @@ export default class Button extends Component {
         }}>
         <p style={styles.button_label}>{this.props.label}</p>
       </button>
+    );
+  }
+
+}
+
+export class FloatButton extends Component {
+
+  render() {
+    let { style } = this.props;
+
+    return (
+      <div
+        className="container-float-button"
+        style={{...styles.container_float_button, ...style}}>
+        <img
+          style={styles.icon_float_button}
+          src={require('../assets/imgs/icons/add.svg')} />
+      </div>
     );
   }
 
