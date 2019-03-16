@@ -49,7 +49,9 @@ export const questions = {
   
       request.then((response) => {
         if (response.status == 201) {
-          
+          payload.success_callback && payload.success_callback();
+
+          dispatch.questions.getAll();
         } else {
           Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
         }

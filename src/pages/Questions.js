@@ -34,10 +34,18 @@ class Questions extends Component {
             : null
           }
         </div>
-        <FloatButton />
-        <CreateQuestionContainer userToken={this.props.userToken} />
+        <FloatButton onClick={() => {
+          this._create_question_ref && this._create_question_ref.show();
+        }} />
+        <CreateQuestionContainer
+          ref={this._createQuestionRef}
+          userToken={this.props.userToken} />
       </div>
     );
+  }
+
+  _createQuestionRef = (ref) => {
+    this._create_question_ref = ref;
   }
 
 }
@@ -90,7 +98,7 @@ class CreateQuestion extends Component {
   state = {
     title_err: '',
     content_err: '',
-    should_show: true,
+    should_show: false,
   }
 
   constructor(props) {
@@ -103,7 +111,7 @@ class CreateQuestion extends Component {
       return (
         <div
           style={styles.container_create_question}
-          onClick={() => this.setState({ should_show: false })}>
+          onClick={this.hide}>
           <div
             style={styles.panel_create_question}
             onClick={(event) => {
@@ -139,7 +147,8 @@ class CreateQuestion extends Component {
         && this.props.create(
           this.input_values['title'],
           this.input_values['content'],
-          this.props.userToken
+          this.props.userToken,
+          this.hide,
         );
     }
   }
@@ -163,6 +172,13 @@ class CreateQuestion extends Component {
     }
   }
 
+  show = () => {
+    this.setState({ should_show: true });
+  }
+  hide = () => {
+    this.setState({ should_show: false });
+  }
+
   // check if there is a error message
   _checkErr = obj => {
     // traverse the obj, if there is any valid error message, return true
@@ -175,6 +191,6 @@ class CreateQuestion extends Component {
 }
 
 let mapDispatchCreateQuestion = (dispatch) => ({
-  create: (title, content, user_token) => dispatch.questions.create({ title, content, user_token }),
+  create: (title, content, user_token, success_callback) => dispatch.questions.create({ title, content, user_token, success_callback }),
 });
-const CreateQuestionContainer = connect(null, mapDispatchCreateQuestion)(CreateQuestion);
+const CreateQuestionContainer = connect(null, mapDispatchCreateQuestion, null, { forwardRef: true })(CreateQuestion);

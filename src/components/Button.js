@@ -34,10 +34,13 @@ export default class Button extends Component {
 export class FloatButton extends Component {
 
   render() {
+    const { onClick } = this.props;
+
     return (
       <div
         style={styles.container_float_button}
-        className="container-float-button">
+        className="container-float-button"
+        onClick={onClick}>
         <img
           style={styles.icon}
           src={require('../assets/imgs/icons/add.svg')} />
