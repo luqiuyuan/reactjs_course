@@ -16,7 +16,7 @@ import validate, {
 } from '../utils/validations';
 import Popup from '../modules/Popup'
 import { SERVER_ADDRESS } from '../constants';
-
+import { connect } from "react-redux";
 
 const VALIDATION_CONFIG = {
   email: [existence, emailFormat],
@@ -36,7 +36,7 @@ class SignInSignUp extends Component {
           <Text type="xl RussoOne" style={styles.header}>BIG FISH</Text>
           <Switch>
             <Route path="/signup" render={() => <SignUpForm />} />
-            <Route path="/" render={() => <LoginForm onLogin={this.props.onLogin} />} />
+            <Route path="/" render={() => <SignInFormContainer />} />
           </Switch>
         </div>
 
@@ -50,7 +50,7 @@ class SignInSignUp extends Component {
 
 export default SignInSignUp;
 
-class SignUpForm extends Component {
+export class SignUpForm extends Component {
 
   state = {
     redirect_to_login: false,
@@ -110,7 +110,7 @@ class SignUpForm extends Component {
 
 }
 
-class LoginForm extends Component {
+export class SignInForm extends Component {
 
   state = {
     redirect_to_questions: false,
@@ -132,47 +132,15 @@ class LoginForm extends Component {
   }
 
   onSubmit = (input_values) => {
-    let request = axios({
-      method: 'post',
-      url: SERVER_ADDRESS + '/user_tokens',
-      data: {
-        credential: {
-          email: input_values['email'],
-          password: input_values['password'],
-        }
-      },
-      validateStatus: function (status) {
-        return (status >= 200 && status < 300) || (status >= 400 && status < 500);
-      },
-    });
-
-    request.then((response) => {
-      if (response.status == 201) {
-        let {
-          user_id,
-          key,
-          expire_in,
-        } = response.data.user_token;
-        this.props.onLogin && this.props.onLogin({ user_id, key, expire_in });
-
-        this.setState({ redirect_to_questions: true });
-      } else if (response.status == 400) {
-        let first_error = response.data.errors[0];
-        if (first_error.code == 'invalid_credential') {
-          Popup.warn("Email or password is incorrect! Please try again");
-        } else {
-          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
-        }
-      } else {
-        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
-      }
-    })
-    .catch((error) => {
-      Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
-    });
+    this.props.login && this.props.login(input_values['email'], input_values['password'], () => this.setState({ redirect_to_questions: true }));
   }
   
 }
+
+const mapDispatch = ({ user_token: { create } }) => ({
+  login: (email, password, successful_callback) => create({ email, password, successful_callback }),
+});
+const SignInFormContainer = connect(null, mapDispatch)(SignInForm);
 
 
 // 一个可行的解决方案，

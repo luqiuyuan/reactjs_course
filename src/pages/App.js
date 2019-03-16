@@ -7,31 +7,19 @@ import Popups from '../components/Popups';
 
 class App extends Component {
 
-  state = {
-    user_token: null,
-  }
-
   render() {
     return (
       <BrowserRouter>
         <>
-          {this.state.user_token ? 
           <Switch>
-            <Route path="/questions" render={() => <Questions userToken={this.state.user_token} />} />
-            <Redirect to="/questions"/>
-          </Switch> :
-          <Switch>
-            <Route path={['/', '/signin', '/login']} render={() => <SignInSignUp onLogin={this.onLogin} />} />
+            <Route path="/questions" render={() => <Questions />} />
+            <Route path={['/', '/signin', '/login']} render={() => <SignInSignUp />} />
             <Redirect to="/login"/>
-          </Switch>}
+          </Switch>
           <Popups ref={register} />
         </>
       </BrowserRouter>
     );
-  }
-
-  onLogin = (user_token) => {
-    this.setState({ user_token });
   }
 
 }
