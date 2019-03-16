@@ -6,7 +6,13 @@ import Question from '../components/Question';
 import Seperator from '../components/Seperator';
 import WhiteBlank from '../components/WhiteBlank';
 import { connect } from 'react-redux';
-import { FloatButton } from '../components/Button';
+import Button, { FloatButton } from '../components/Button';
+import TextInput from '../components/TextInput';
+import validate, {
+  existence,
+  questionTitleLength,
+  questionContentLength,
+} from '../utils/validations';
 
 class Questions extends Component {
 
@@ -29,6 +35,7 @@ class Questions extends Component {
           }
         </div>
         <FloatButton />
+        <CreateQuestion />
       </div>
     );
   }
@@ -71,4 +78,92 @@ function QuestionList(props) {
   } else {
     return null;
   }
+}
+
+class CreateQuestion extends Component {
+
+  static VALIDATIONS = {
+    title: [existence, questionTitleLength],
+    content: [questionContentLength],
+  }
+
+  state = {
+    title_err: '',
+    content_err: '',
+    should_show: true,
+  }
+
+  constructor(props) {
+    super(props)
+    this.input_values = {};
+  }
+
+  render() {
+    if (this.state.should_show) {
+      return (
+        <div
+          style={styles.container_create_question}
+          onClick={() => this.setState({ should_show: false })}>
+          <div
+            style={styles.panel_create_question}
+            onClick={(event) => {
+              event.stopPropagation();
+            }}>
+            <TextInput id="title" style={styles.title_create_question} errMsg={this.state['title_err']} onBlur={this.onBlur} onChange={this.onChange} placeholder="Title" />
+            <WhiteBlank w={8} />
+            <TextInput id="content" style={styles.content_create_question} errMsg={this.state['content_err']} onBlur={this.onBlur} onChange={this.onChange} placeholder="Content" />
+            <div style={styles.blank} />
+            <Button label="Ask" style={styles.button_create_question} onClick={this.onSubmit} />
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  onSubmit = () => {
+    // validate each input, get error message
+    let _errMsgs = {}
+    Object.keys(CreateQuestion.VALIDATIONS).forEach((id) => {
+      if (CreateQuestion.VALIDATIONS[id]) {
+        _errMsgs[id + '_err'] = validate(CreateQuestion.VALIDATIONS[id], this.input_values[id])
+      }
+    })
+
+    // only try to setState when there are validation errors
+    if (this._checkErr(_errMsgs)) {
+      this.setState(_errMsgs)
+    } else {
+    }
+  }
+
+  // trigger when user typing words
+  onChange = ({ target: { id, value } }) => {
+    this.input_values[id] = value;
+    // Reset the error message when user typing
+    if (this.state[id + '_err']) {
+      this.setState({ [id + '_err']: '' })
+    }
+  }
+
+  // check the input existence on input blur
+  onBlur = ({ target: { id, value } }) => {
+    const first_validation = CreateQuestion.VALIDATIONS[id][0];
+    if (first_validation.name === 'required') {
+      this.setState({
+        [id + '_err']: validate(first_validation, value)
+      });
+    }
+  }
+
+  // check if there is a error message
+  _checkErr = obj => {
+    // traverse the obj, if there is any valid error message, return true
+    for (let val in obj) {
+      if (obj[val]) return true
+    }
+    return false
+  }
+
 }

@@ -8,7 +8,7 @@ export default class TextInput extends Component {
     const { style, errMsg, ...rest } = this.props;
 
     return (
-      <div style={{ ...styles.container, style }}>
+      <div style={{ ...styles.container, ...style }}>
         <div>
           <input {...rest} style={styles.input} />
           <div style={styles.line(errMsg)} />

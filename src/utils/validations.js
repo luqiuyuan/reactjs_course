@@ -79,6 +79,16 @@ export const passwordConfirmation = (password) => new Validation(
 )
 
 /**
+ * validate question title
+ */
+export const questionTitleLength = makeValidateLength(0, 255)
+
+/**
+ * validate question content
+ */
+export const questionContentLength = makeValidateLength(0, 65535)
+
+/**
  * validate if given input value longer than len
  * @param {number} max_len the max length of input
  * @param {number} min_len the min length of input

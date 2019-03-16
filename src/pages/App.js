@@ -15,15 +15,11 @@ class App extends Component {
     return (
       <BrowserRouter>
         <>
-          {this.state.user_token ? 
           <Switch>
             <Route path="/questions" render={() => <Questions userToken={this.state.user_token} />} />
-            <Redirect to="/questions"/>
-          </Switch> :
-          <Switch>
             <Route path={['/', '/signin', '/login']} render={() => <SignInSignUp onLogin={this.onLogin} />} />
             <Redirect to="/login"/>
-          </Switch>}
+          </Switch>
           <Popups ref={register} />
         </>
       </BrowserRouter>
