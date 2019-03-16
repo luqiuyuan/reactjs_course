@@ -40,7 +40,7 @@ class Questions extends Component {
           }
         </div>
         <FloatButton style={styles.button_add} onClick={() => this._create_question_ref && this._create_question_ref.show()} />
-        <CreateQuestion ref={this._createQuestionRef} />
+        <CreateQuestionContainer ref={this._createQuestionRef} />
       </div>
     );
   }
@@ -98,6 +98,13 @@ class CreateQuestion extends Component {
 
   state = {
     should_show: false,
+    title_err: '',
+    content_err: '',
+  }
+
+  constructor(props) {
+    super(props)
+    this.input_values = {};
   }
 
   render() {
@@ -115,7 +122,7 @@ class CreateQuestion extends Component {
             <WhiteBlank w={8} />
             <TextInput id="content" style={styles.content_create_question} errMsg={this.state['content_err']} onBlur={this.onBlur} onChange={this.onChange} placeholder="Content" />
             <div style={styles.blank} />
-            <Button label="Ask" style={styles.button_create_question} />
+            <Button label="Ask" style={styles.button_create_question} onClick={this.onSubmit} />
           </div>
         </div>
       );
@@ -127,9 +134,9 @@ class CreateQuestion extends Component {
   onSubmit = () => {
     // validate each input, get error message
     let _errMsgs = {}
-    CreateQuestion.VALIDATIONS.forEach(({ validations, id }) => {
-      if (validations) {
-        _errMsgs[id + '_err'] = validate(validations, this.input_values[id])
+    Object.keys(CreateQuestion.VALIDATIONS).forEach((id) => {
+      if (CreateQuestion.VALIDATIONS[id]) {
+        _errMsgs[id + '_err'] = validate(CreateQuestion.VALIDATIONS[id], this.input_values[id])
       }
     })
 
@@ -137,7 +144,10 @@ class CreateQuestion extends Component {
     if (this._checkErr(_errMsgs)) {
       this.setState(_errMsgs)
     } else {
-      
+      this.props.create && this.props.create(this.input_values['title'], this.input_values['content'], () => {
+        this.props.getAll && this.props.getAll();
+        this.hide();
+      });
     }
   }
 
@@ -152,11 +162,11 @@ class CreateQuestion extends Component {
 
   // check the input existence on input blur
   onBlur = ({ target: { id, value } }) => {
-    const first_validation = CreateQuestion.VALIDATIONS[id][0]
+    const first_validation = CreateQuestion.VALIDATIONS[id][0];
     if (first_validation.name === 'required') {
       this.setState({
         [id + '_err']: validate(first_validation, value)
-      })
+      });
     }
   }
 
@@ -177,3 +187,9 @@ class CreateQuestion extends Component {
   }
 
 }
+
+const mapDispatchCreateQuestion = ({ questions: { getAll, create } }) => ({
+  getAll: () => getAll(),
+  create: (title, content, success_callback) => create({title, content, success_callback}),
+});
+const CreateQuestionContainer = connect(null, mapDispatchCreateQuestion, null, { forwardRef: true })(CreateQuestion);

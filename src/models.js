@@ -129,6 +129,44 @@ export const questions = {
       .catch((error) => {
         Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
       });;
+    },
+    create(payload, state) {
+      if (!state.user_token) {
+        return;
+      }
+
+      const request = axios({
+        method: 'post',
+        url: SERVER_ADDRESS + '/questions',
+        headers: {
+          Authorization: JSON.stringify({
+            user_token: {
+              user_id: state.user_token.user_id,
+              key: state.user_token.key,
+            },
+          }),
+        },
+        data: {
+          question: {
+            title: payload.title,
+            content: payload.content,
+          },
+        },
+        validateStatus: function (status) {
+          return (status >= 200 && status < 300) || (status >= 400 && status < 500);
+        },
+      });
+
+      request.then((response) => {
+        if (response.status == 201) {
+          payload && payload.success_callback && payload.success_callback();
+        } else {
+          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
+        }
+      })
+      .catch((error) => {
+        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
+      });
     }
   }),
 };
