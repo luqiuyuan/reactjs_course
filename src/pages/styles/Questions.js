@@ -36,7 +36,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingTop: 23,
     paddingBottom: 23,
     flexShrink: 0,
