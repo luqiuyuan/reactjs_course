@@ -6,6 +6,7 @@ import Question from '../components/Question';
 import Seperator from '../components/Seperator';
 import WhiteBlank from '../components/WhiteBlank';
 import { connect } from 'react-redux';
+import { FloatButton } from '../components/Button';
 
 class Questions extends Component {
 
@@ -27,6 +28,7 @@ class Questions extends Component {
             : null
           }
         </div>
+        <FloatButton />
       </div>
     );
   }
