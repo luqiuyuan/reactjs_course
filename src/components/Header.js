@@ -2,11 +2,19 @@ import React from 'react';
 
 import styles from './styles/Header';
 import Text from '../components/Text';
+import { withRouter } from 'react-router-dom';
+import './styles/Header.css';
 
-export default function Header(props) {
+function Header(props) {
   return (
     <div style={styles.container}>
-      <Text type='l RussoOne' style={styles.logo}>BIG FISH</Text>
+      <Text
+        type='l RussoOne'
+        className="logo"
+        style={styles.logo}
+        onClick={() => props.history.push('/')}>
+        BIG FISH
+      </Text>
       <img
         style={styles.avatar}
         src={props.avatarSrc}
@@ -14,3 +22,5 @@ export default function Header(props) {
     </div>
   );
 }
+
+export default withRouter(Header);

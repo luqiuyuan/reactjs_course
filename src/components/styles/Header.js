@@ -21,6 +21,7 @@ const styles = {
   logo: {
     color: COLOR_THEME,
     marginLeft: 19,
+    cursor: 'pointer',
   },
 
   avatar: {
