@@ -79,7 +79,7 @@ export class SignUpForm extends Component {
 }
 
 const mapDispatchSignUpForm = ({ users: { create } }) => ({
-  signup: (email, password, name, successful_callback) => create({ email, password, name, successful_callback }),
+  signup: (email, password, name, success_callback) => create({ email, password, name, success_callback }),
 });
 const SignUpFormContainer = connect(null, mapDispatchSignUpForm)(SignUpForm);
 

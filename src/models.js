@@ -48,7 +48,7 @@ export const user_token = {
   }),
 };
 
-export const user = {
+export const users = {
   state: {},
   reducers: {
     add(state, payload) {
@@ -75,6 +75,7 @@ export const user = {
   
       request.then((response) => {
         if (response.status == 201) {
+          dispatch.users.add(response.data.user);
           Popup.warn("Congradulations! Your registration was successful!");
           
           payload && payload.success_callback && payload.success_callback();
