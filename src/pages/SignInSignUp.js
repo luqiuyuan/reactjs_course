@@ -16,7 +16,7 @@ import validate, {
 } from '../utils/validations';
 import Popup from '../modules/Popup'
 import { SERVER_ADDRESS } from '../constants';
-
+import { connect } from 'react-redux';
 
 const VALIDATION_CONFIG = {
   email: [existence, emailFormat],
@@ -35,8 +35,8 @@ class SignInSignUp extends Component {
 
           <Text type="xl RussoOne" style={styles.header}>BIG FISH</Text>
           <Switch>
-            <Route path="/signup" render={() => <SignUpForm />} />
-            <Route path="/" render={() => <LoginForm onLogin={this.props.onLogin} />} />
+            <Route path="/signup" render={() => <SignUpFormContainer />} />
+            <Route path="/" render={() => <LoginFormContainer onLogin={this.props.onLogin} />} />
           </Switch>
         </div>
 
@@ -73,42 +73,23 @@ class SignUpForm extends Component {
   }
 
   onSubmit = (input_values) => {
-    let request = axios({
-      method: 'post',
-      url: SERVER_ADDRESS + '/users',
-      data: {
-        user: {
-          email: input_values['email'],
-          password: input_values['password'],
-          name: input_values['name'],
-        }
-      },
-      validateStatus: function (status) {
-        return (status >= 200 && status < 300) || (status >= 400 && status < 500);
-      },
-    });
-
-    request.then((response) => {
-      if (response.status == 201) {
-        Popup.warn("Congradulations! Your registration was successful!");
-        this.setState({ redirect_to_login: true })
-      } else if (response.status == 400) {
-        let first_error = response.data.errors[0];
-        if (first_error.code == 'duplicated_field') {
-          Popup.warn("This email has already been registered.");
-        } else {
-          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
-        }
-      } else {
-        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
+    this.props.signup && this.props.signup(
+      input_values['email'],
+      input_values['password'],
+      input_values['name'],
+      () => {
+        this.setState({ redirect_to_login: true });
       }
-    })
-    .catch((error) => {
-      Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
-    });
+    );
   }
 
 }
+
+const mapDispatchSignUp = ({ users: { create } }) => ({
+  signup: (email, password, name, success_callback) =>
+    create({ email, password, name, success_callback }),
+});
+const SignUpFormContainer = connect(null, mapDispatchSignUp)(SignUpForm);
 
 class LoginForm extends Component {
 
@@ -132,48 +113,19 @@ class LoginForm extends Component {
   }
 
   onSubmit = (input_values) => {
-    let request = axios({
-      method: 'post',
-      url: SERVER_ADDRESS + '/user_tokens',
-      data: {
-        credential: {
-          email: input_values['email'],
-          password: input_values['password'],
-        }
-      },
-      validateStatus: function (status) {
-        return (status >= 200 && status < 300) || (status >= 400 && status < 500);
-      },
-    });
-
-    request.then((response) => {
-      if (response.status == 201) {
-        let {
-          user_id,
-          key,
-          expire_in,
-        } = response.data.user_token;
-        this.props.onLogin && this.props.onLogin({ user_id, key, expire_in });
-
-        this.setState({ redirect_to_questions: true });
-      } else if (response.status == 400) {
-        let first_error = response.data.errors[0];
-        if (first_error.code == 'invalid_credential') {
-          Popup.warn("Email or password is incorrect! Please try again");
-        } else {
-          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
-        }
-      } else {
-        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
-      }
-    })
-    .catch((error) => {
-      Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
-    });
+    this.props.login(
+      input_values['email'],
+      input_values['password'],
+      () => this.setState({ redirect_to_questions: true })
+    );
   }
   
 }
 
+const mapDispatchLogin = ({ user_token: { create } }) => ({
+  login: (email, password, success_callback) => create({ email, password, success_callback }),
+});
+const LoginFormContainer = connect(null, mapDispatchLogin)(LoginForm);
 
 // 一个可行的解决方案，
 // 主要的思想是：进一步抽象组件，把表单验证、提交提炼为一个较为通用的组件

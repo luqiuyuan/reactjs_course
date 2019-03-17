@@ -147,7 +147,6 @@ class CreateQuestion extends Component {
         && this.props.create(
           this.input_values['title'],
           this.input_values['content'],
-          this.props.userToken,
           this.hide,
         );
     }
@@ -191,6 +190,6 @@ class CreateQuestion extends Component {
 }
 
 let mapDispatchCreateQuestion = (dispatch) => ({
-  create: (title, content, user_token, success_callback) => dispatch.questions.create({ title, content, user_token, success_callback }),
+  create: (title, content, success_callback) => dispatch.questions.create({ title, content, success_callback }),
 });
 const CreateQuestionContainer = connect(null, mapDispatchCreateQuestion, null, { forwardRef: true })(CreateQuestion);
