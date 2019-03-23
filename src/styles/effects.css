@@ -1,0 +1,10 @@
+.hover-opacity:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.hover-scale:hover {
+  transition: all .3s;
+  transform: scale(1.05);
+  cursor: pointer;
+}

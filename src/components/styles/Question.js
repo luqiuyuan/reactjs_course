@@ -5,7 +5,6 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    aligmItems: 'center',
   },
 
 };

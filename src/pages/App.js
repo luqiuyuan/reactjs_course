@@ -4,18 +4,30 @@ import SignInSignUp from './SignInSignUp';
 import Questions from './Questions';
 import { register } from '../modules/Popup';
 import Popups from '../components/Popups';
+import { connect } from 'react-redux';
+import Header from '../components/Header';
+import styles from './styles/App';
+
 
 class App extends Component {
 
   render() {
+    const { token } = this.props;
     return (
       <BrowserRouter>
         <>
-          <Switch>
-            <Route path="/questions" render={() => <Questions />} />
-            <Route path={['/', '/signin', '/login']} render={() => <SignInSignUp />} />
-            <Redirect to="/login"/>
-          </Switch>
+          {token ?
+            <div style={styles.page}>
+              <Header avatarSrc={require('../assets/imgs/avatar_default.jpg')} />
+              <Switch>
+                <Route path="/questions" render={(props) => <Questions {...props} />} />
+                <Redirect to="/questions" />
+              </Switch>
+            </div> :
+            <Switch>
+              <Route path={['/', '/signin', '/login']} render={() => <SignInSignUp onLogin={this.onLogin} />} />
+              <Redirect to="/login" />
+            </Switch>}
           <Popups ref={register} />
         </>
       </BrowserRouter>
@@ -24,4 +36,4 @@ class App extends Component {
 
 }
 
-export default App;
+export default connect(state => ({ token: state.user_token }))(App);

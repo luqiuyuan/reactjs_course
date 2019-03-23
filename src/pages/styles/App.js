@@ -2,7 +2,9 @@ import background_image from "../../assets/imgs/background.jpg";
 import {
   COLOR_THEME,
   COLOR_SILVER_WHITE,
+  COLOR_LEAD_WHITE
 } from '../../constants';
+
 
 const styles = {
   container: {
@@ -13,6 +15,17 @@ const styles = {
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     // children styles
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  page: {
+    // styling self
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: COLOR_LEAD_WHITE,
+    // styling children
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',

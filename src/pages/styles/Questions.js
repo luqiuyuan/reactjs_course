@@ -1,21 +1,4 @@
-import {
-  COLOR_LEAD_WHITE,
-  COLOR_YAQING,
-} from '../../constants';
-
 const styles = {
-
-  container: {
-    // styling self
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: COLOR_LEAD_WHITE,
-    // styling children
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
 
   scrollable: {
     // styling self
@@ -44,6 +27,7 @@ const styles = {
   },
 
   question: {
+    alignSelf: 'stretch',
     marginLeft: 29,
     marginRight: 29,
   },

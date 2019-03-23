@@ -103,7 +103,7 @@ export class SignInForm extends Component {
   }
 
   onSubmit = (input_values) => {
-    this.props.login && this.props.login(input_values['email'], input_values['password'], () => this.setState({ redirect_to_questions: true }));
+    this.props.login && this.props.login(input_values['email'], input_values['password']);
   }
   
 }
