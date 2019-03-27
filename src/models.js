@@ -3,7 +3,7 @@ import { SERVER_ADDRESS } from './constants';
 import Popup from './modules/Popup';
 
 export const user_token = {
-  state: null,
+  state: JSON.parse(localStorage.getItem('user_token')),
   reducers: {
     set(state, payload) {
       return payload;
@@ -11,24 +11,20 @@ export const user_token = {
   },
   effects: (dispatch) => ({
     create(payload, state) {
-      let request = axios({
+      callApi({
         method: 'post',
-        url: SERVER_ADDRESS + '/user_tokens',
+        uri: '/user_tokens',
         data: {
           credential: {
             email: payload.email,
             password: payload.password,
           }
         },
-        validateStatus: function (status) {
-          return (status >= 200 && status < 300) || (status >= 400 && status < 500);
-        },
-      });
-  
-      request.then((response) => {
+        errHandlers: status => status == 400
+      }).then((response) => {
         if (response.status == 201) {
+          localStorage.setItem('user_token', JSON.stringify(response.data.user_token))
           dispatch.user_token.set(response.data.user_token);
-  
           payload && payload.success_callback && payload.success_callback();
         } else if (response.status == 400) {
           let first_error = response.data.errors[0];
@@ -37,13 +33,9 @@ export const user_token = {
           } else {
             Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
           }
-        } else {
-          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
         }
       })
-      .catch((error) => {
-        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
-      });
+
     }
   }),
 };
@@ -52,15 +44,16 @@ export const users = {
   state: {},
   reducers: {
     add(state, payload) {
-      let state_new = {...state, [payload.id]: payload};
+      let state_new = { ...state, [payload.id]: payload };
       return state_new;
     }
   },
   effects: (dispatch) => ({
     create(payload, state) {
-      let request = axios({
+
+      callApi({
         method: 'post',
-        url: SERVER_ADDRESS + '/users',
+        uri: '/users',
         data: {
           user: {
             email: payload.email,
@@ -68,16 +61,12 @@ export const users = {
             name: payload.name,
           }
         },
-        validateStatus: function (status) {
-          return (status >= 200 && status < 300) || (status >= 400 && status < 500);
-        },
-      });
-  
-      request.then((response) => {
+        errHandlers: status => status == 400
+      }).then((response) => {
         if (response.status == 201) {
           dispatch.users.add(response.data.user);
           Popup.warn("Congradulations! Your registration was successful!");
-          
+
           payload && payload.success_callback && payload.success_callback();
         } else if (response.status == 400) {
           let first_error = response.data.errors[0];
@@ -86,13 +75,13 @@ export const users = {
           } else {
             Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error code is " + first_error.code + ")");
           }
-        } else {
-          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
         }
       })
-      .catch((error) => {
-        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
-      });
+
+    },
+    async getUser(id){
+     const response = await callApi({uri: `/users/${id}`})
+     dispatch.users.add(response.data.user)
     }
   })
 };
@@ -106,29 +95,13 @@ export const questions = {
   },
   effects: (dispatch) => ({
     getAll(payload, state) {
-      // axios是网页端常用的网络访问组件，符合REST风格。这个组件的使用非常灵活，下面这句还可以写成
-      // const request = axios.get(SERVER_ADDRESS + '/questions');
-      // 更多axios的用法，可以参考它的文档：https://github.com/axios/axios
-      const request = axios({
-        method: 'get',
-        url: SERVER_ADDRESS + '/questions',
-        validateStatus: function (status) {
-          return (status >= 200 && status < 300) || (status >= 400 && status < 500);
-        },
-      });
-
-      request.then((response) => {
-        if (response.status == 200) {
+      callApi({ uri: '/questions', errHandlers: status => status === 404 }).then(response => {
+        if (response && response.status == 200) {
           dispatch.questions.set(response.data.questions);
-        } else if (response.status == 404) {
+        } else if (response && response.status == 404) {
           dispatch.questions.set([]);
-        } else {
-          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
         }
       })
-      .catch((error) => {
-        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
-      });;
     },
     create(payload, state) {
       if (!state.user_token) {
@@ -136,38 +109,99 @@ export const questions = {
         return;
       }
 
-      const request = axios({
+      callApi({
         method: 'post',
-        url: SERVER_ADDRESS + '/questions',
-        headers: {
-          Authorization: JSON.stringify({
-            user_token: {
-              user_id: state.user_token.user_id,
-              key: state.user_token.key,
-            },
-          }),
-        },
+        uri: '/questions',
+        user_token: state.user_token,
         data: {
           question: {
             title: payload.title,
             content: payload.content,
-          },
+          }
         },
-        validateStatus: function (status) {
-          return (status >= 200 && status < 300) || (status >= 400 && status < 500);
-        },
-      });
-
-      request.then((response) => {
-        if (response.status == 201) {
+      }).then(response => {
+        if (response && response.status == 201) {
           payload && payload.success_callback && payload.success_callback();
-        } else {
-          Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (status is " + response.status + ")");
         }
-      })
-      .catch((error) => {
-        Popup.warn("Something expected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
-      });
+      }
+      )
     }
   }),
 };
+
+
+export const answers = {
+  state: {},
+  reducers: {
+    update(state, payload) {
+      return {
+        ...state,
+        ...payload
+      }
+    }
+  },
+  effects: dispatch => ({
+    async getAnswers(question_id, rootState) {
+      const response = await callApi({
+        uri: `/questions/${question_id}/answers`,
+        user_token: rootState.user_token,
+        errHandlers: status => status == 404
+      })
+
+      if (response.status == 200) {
+        dispatch.answers.update({
+          [question_id]: response.data.answers
+        })
+      }
+    },
+
+    async create({ question_id, content }, rootState) {
+      const response = await callApi({
+        method: 'post',
+        uri: `/questions/${question_id}/answers`,
+        user_token: rootState.user_token,
+        data: {
+          answer: {
+            content
+          }
+        }
+      })
+
+
+      return response.data
+    }
+  })
+}
+
+
+
+function callApi({ method = 'get', uri, data, user_token, errHandlers = status => false }) {
+
+  // axios是网页端常用的网络访问组件，符合REST风格。这个组件的使用非常灵活，下面这句还可以写成
+  // const request = axios.get(SERVER_ADDRESS + '/questions');
+  // 更多axios的用法，可以参考它的文档：https://github.com/axios/axios
+  const auth = user_token ? {
+    Authorization: JSON.stringify({
+      user_token: {
+        user_id: user_token.user_id,
+        key: user_token.key,
+      },
+    })
+  } : {}
+  const request = axios({
+    method: method,
+    url: SERVER_ADDRESS + uri,
+    validateStatus: function (status) {
+      return (status >= 200 && status < 300) || errHandlers(status);
+    },
+    data,
+    headers: { ...auth }
+  });
+
+  return request.then((response) => response)
+    .catch((error) => {
+      Popup.warn("Something unexpected happened T_T Please contact admin@bigfish.ca. (error is " + error + ")");
+      throw new Error('Something unexpected happened')
+    });
+}
+
