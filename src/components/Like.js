@@ -27,9 +27,13 @@ class Like extends Component {
 
   onClick = () => {
     if (this.props.liked) {
-      this.props.dislike && this.props.dislike(this.props.question_id);
+      this.props.dislike && this.props.dislike(this.props.question_id, () => {
+        this.props.getAll && this.props.getAll();
+      });
     } else {
-      this.props.like && this.props.like(this.props.question_id);
+      this.props.like && this.props.like(this.props.question_id, () => {
+        this.props.getAll && this.props.getAll();
+      });
     }
   }
 
@@ -47,8 +51,9 @@ const styles = {
   }
 }
 
-const mapDispatch = ({ questions: { like, dislike } }) => ({
-  like: (question_id) => like(question_id),
-  dislike: (question_id) => dislike(question_id),
+const mapDispatch = ({ questions: { getAll, like, dislike } }) => ({
+  getAll: () => getAll(),
+  like: (question_id, success_callback) => like({ question_id, success_callback }),
+  dislike: (question_id, success_callback) => dislike({ question_id, success_callback }),
 });
 export default connect(null, mapDispatch)(Like);

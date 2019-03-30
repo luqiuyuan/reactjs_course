@@ -130,21 +130,29 @@ export const questions = {
       }
       )
     },
-    async like(question_id, rootState) {
+    async like({ question_id, success_callback }, rootState) {
       const response = await callApi({
         method: 'post',
         uri: `/questions/${question_id}/like`,
         user_token: rootState.user_token,
         errHandlers: status => status == 400 || status == 404,
       });
+
+      if (response && response.status == 201) {
+       success_callback && success_callback();
+      }
     },
-    async dislike(question_id, rootState) {
+    async dislike({ question_id, success_callback }, rootState) {
       const response = await callApi({
         method: 'delete',
         uri: `/questions/${question_id}/like`,
         user_token: rootState.user_token,
         errHandlers: status => status == 400 || status == 404,
       });
+
+      if (response && response.status == 200) {
+        success_callback && success_callback();
+      }
     }
   }),
 };
