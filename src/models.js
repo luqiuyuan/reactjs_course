@@ -79,9 +79,13 @@ export const users = {
       })
 
     },
-    async getUser(id){
-     const response = await callApi({uri: `/users/${id}`})
-     dispatch.users.add(response.data.user)
+    async getUser({ id, success_callback }){
+     const response = await callApi({uri: `/users/${id}`});
+     dispatch.users.add(response.data.user);
+     
+     if (response.status == 200) {
+       success_callback && success_callback(response.data.user);
+     }
     }
   })
 };

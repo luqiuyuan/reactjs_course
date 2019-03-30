@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import SignInSignUp from './SignInSignUp';
 import Questions from './Questions';
+import User from './User';
 import { register } from '../modules/Popup';
 import Popups from '../components/Popups';
 import { connect } from 'react-redux';
@@ -21,6 +22,7 @@ class App extends Component {
               <Header avatarSrc={require('../assets/imgs/avatar_default.jpg')} />
               <Switch>
                 <Route path="/questions" render={(props) => <Questions {...props} />} />
+                <Route path="/users/:id" render={(props) => <User {...props} />} />
                 <Redirect to="/questions" />
               </Switch>
             </div> :
