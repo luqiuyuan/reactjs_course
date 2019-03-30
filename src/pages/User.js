@@ -8,6 +8,19 @@ import TextInput from '../components/TextInput';
 import validate, {
   nameLength
 } from '../utils/validations';
+import defaultAvatar from '../assets/imgs/avatar_default.jpg';
+import * as firebase from 'firebase';
+
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyCSlaCGWn08FSiesAcNjYmDHfDWRwHonhY",
+  authDomain: "bigfish-48c70.firebaseapp.com",
+  databaseURL: "https://bigfish-48c70.firebaseio.com",
+  projectId: "bigfish-48c70",
+  storageBucket: "bigfish-48c70.appspot.com",
+  messagingSenderId: "39090856777"
+};
+firebase.initializeApp(config);
 
 class User extends Component {
 
@@ -30,27 +43,35 @@ class User extends Component {
           id={id}
           onFetched={(user) => this.setState({ input_values: {...this.state.input_values, name: user.name} })}>
           {
-            (user) => <div style={styles.info}>
-              <Editable
-                childrenNormal={
-                  <Text type="xl">{user.name}</Text>
-                }
-                childrenEditing={
-                  <TextInput
-                    placeholder="Name"
-                    value={this.state.input_values.name !== undefined? this.state.input_values.name : user.name}
-                    id="name"
-                    errMsg={this.state['name_err']}
-                    onBlur={this.onBlur}
-                    onChange={this.onChange} />
-                }
+            (user) => <>
+              <Avatar
+                style={styles.avatar}
+                avatarURL={user.avatar_url}
+                userID={user.id}
                 editable={user_token.user_id == id}
-                onSave={this.onSaveName} />
-              <Text>Gender</Text>
-              <Text>{user.gender}</Text>
-              <Text>Short Description</Text>
-              <Text>{user.discription}</Text>
-            </div>
+                onUploaded={this.props.update} />
+              <div style={styles.info}>
+                <Editable
+                  childrenNormal={
+                    <Text type="xl">{user.name}</Text>
+                  }
+                  childrenEditing={
+                    <TextInput
+                      placeholder="Name"
+                      value={this.state.input_values.name !== undefined? this.state.input_values.name : user.name}
+                      id="name"
+                      errMsg={this.state['name_err']}
+                      onBlur={this.onBlur}
+                      onChange={this.onChange} />
+                  }
+                  editable={user_token.user_id == id}
+                  onSave={this.onSaveName} />
+                <Text>Gender</Text>
+                <Text>{user.gender}</Text>
+                <Text>Short Description</Text>
+                <Text>{user.discription}</Text>
+              </div>
+            </>
           }
         </UserFetcher>
       </div>
@@ -144,6 +165,64 @@ class Editable extends Component {
         }
       </div>
     );
+  }
+
+}
+
+class Avatar extends Component {
+
+  render() {
+    const { avatarURL, style, editable } = this.props;
+
+    return (
+      <div style={{...styles.container_avatar, backgroundImage: 'url(' + (avatarURL? avatarURL : defaultAvatar) + ')', ...style}}>
+        {editable
+        ? <div
+            style={styles.overlay}
+            onClick={this.onClick}>
+            <img
+              style={styles.icon_camera}
+              src={require('../assets/imgs/icons/photo-camera.svg')} />
+            <Text type="white" style={styles.text_avatar}>Edit your avatar</Text>
+            <input
+              style={{display: 'none'}}
+              type="file" ref={this.fileInputRef}
+              onChange={this.onChange} />
+          </div>
+        : null
+        }
+      </div>
+    );
+  }
+
+  onClick = () => {
+    this._file_input && this._file_input.click();
+  }
+
+  onChange = (event) => {
+    var file = event.target.files[0];
+    this.uploadImage(file, this.props.userID);
+  }
+
+  uploadImage(image, user_id) {
+    var storageRef = firebase.storage().ref();
+    var imageRef = storageRef.child(`/avatars/${user_id}`);
+
+    var uploadTask = imageRef.put(image);
+    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
+      // Callbacks called during uploading
+    }, () => {
+      // Fail callback
+    }, () => {
+      // Success callback
+      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        this.props.onUploaded && this.props.onUploaded({ avatar_url: downloadURL });
+      });
+    });
+  }
+
+  fileInputRef = (ref) => {
+    this._file_input = ref;
   }
 
 }

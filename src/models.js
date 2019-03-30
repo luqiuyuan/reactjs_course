@@ -93,8 +93,12 @@ export const users = {
         uri: `/user`,
         user_token: rootState.user_token,
         data: { user },
-        errHandlers: status => status === 400 || status === 404
+        errHandlers: status => status === 400
       });
+
+      if (response.status === 200) {
+        dispatch.users.add(response.data.user);
+      }
     },
   })
 };
