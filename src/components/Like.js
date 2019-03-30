@@ -5,11 +5,19 @@ import { connect } from 'react-redux';
 
 class Like extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      num: this.props.num,
+      liked: this.props.liked,
+    };
+  }
+
   render() {
     const {
       num,
       liked,
-    } = this.props;
+    } = this.state;
 
     const text_style = liked ? 's white' : 's red'
 
@@ -26,14 +34,16 @@ class Like extends Component {
   }
 
   onClick = () => {
-    if (this.props.liked) {
+    if (this.state.liked) {
       this.props.dislike && this.props.dislike(this.props.question_id, () => {
         this.props.getAll && this.props.getAll();
       });
+      this.setState({ liked: false, num: this.state.num-1 });
     } else {
       this.props.like && this.props.like(this.props.question_id, () => {
         this.props.getAll && this.props.getAll();
       });
+      this.setState({ liked: true, num: this.state.num+1 });
     }
   }
 
