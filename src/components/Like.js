@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import Text from './Text';
 import WhiteBlank from './WhiteBlank';
 import { connect } from 'react-redux';
+import {
+  COLOR_THEME,
+  COLOR_LIGHT_ORANGE,
+} from '../constants';
 
 class Like extends Component {
 
@@ -24,7 +28,7 @@ class Like extends Component {
     return (
       <div
         className="hover-scale"
-        style={styles.container}
+        style={{...styles.container, backgroundColor: liked? COLOR_THEME : COLOR_LIGHT_ORANGE }}
         onClick={this.onClick}>
         <Text type={text_style}>▲</Text>
         <WhiteBlank w={11} />
@@ -55,7 +59,6 @@ class Like extends Component {
 
 const styles = {
   container: {
-    backgroundColor: '#F4BDB0',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
