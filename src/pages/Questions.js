@@ -75,6 +75,7 @@ function QuestionList({ questions }) {
         numOfLikes={question.number_of_likes}
         key={"question_" + question.id}
         title={question.title}
+        liked={question.liked}
         content={question.content}
         style={styles.question} />}
       />

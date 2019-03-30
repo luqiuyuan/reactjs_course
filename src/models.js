@@ -94,8 +94,12 @@ export const questions = {
     }
   },
   effects: (dispatch) => ({
-    getAll(payload, state) {
-      callApi({ uri: '/questions', errHandlers: status => status === 404 }).then(response => {
+    getAll(payload, rootState, state) {
+      callApi({
+        uri: '/questions',
+        user_token: rootState.user_token,
+        errHandlers: status => status === 404
+      }).then(response => {
         if (response && response.status == 200) {
           dispatch.questions.set(response.data.questions);
         } else if (response && response.status == 404) {
@@ -125,6 +129,22 @@ export const questions = {
         }
       }
       )
+    },
+    async like(question_id, rootState) {
+      const response = await callApi({
+        method: 'post',
+        uri: `/questions/${question_id}/like`,
+        user_token: rootState.user_token,
+        errHandlers: status => status == 400 || status == 404,
+      });
+    },
+    async dislike(question_id, rootState) {
+      const response = await callApi({
+        method: 'delete',
+        uri: `/questions/${question_id}/like`,
+        user_token: rootState.user_token,
+        errHandlers: status => status == 400 || status == 404,
+      });
     }
   }),
 };
