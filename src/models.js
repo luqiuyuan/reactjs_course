@@ -86,7 +86,16 @@ export const users = {
      if (response.status == 200) {
        success_callback && success_callback(response.data.user);
      }
-    }
+    },
+    async update({ user }, rootState) {
+      const response = await callApi({
+        method: 'patch',
+        uri: `/user`,
+        user_token: rootState.user_token,
+        data: { user },
+        errHandlers: status => status === 400 || status === 404
+      });
+    },
   })
 };
 

@@ -82,19 +82,14 @@ class User extends Component {
     Object.keys(User.VALIDATIONS).forEach((id) => {
       if (User.VALIDATIONS[id]) {
         _errMsgs[id + '_err'] = validate(User.VALIDATIONS[id], this.state.input_values[id]);
-        console.log(this.state.input_values);
       }
     });
-    console.log(_errMsgs);
 
     // only try to setState when there are validation errors
     if (this._checkErr(_errMsgs)) {
       this.setState(_errMsgs)
     } else {
-      // this.props.create && this.props.create(this.input_values['title'], this.input_values['content'], () => {
-      //   this.props.getAll && this.props.getAll();
-      //   this.hide();
-      // });
+      this.props.update && this.props.update({ name: this.state.input_values.name });
     }
   }
 
@@ -112,7 +107,10 @@ class User extends Component {
 const mapState = state => ({
   user_token: state.user_token,
 });
-export default connect(mapState, null)(User);
+const mapDispatch = ({ users: { update } }) => ({
+  update: (user) => update({ user }),
+});
+export default connect(mapState, mapDispatch)(User);
 
 class Editable extends Component {
 
