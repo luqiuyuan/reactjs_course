@@ -37,11 +37,15 @@ class Like extends Component {
     if (this.state.liked) {
       this.props.dislike && this.props.dislike(this.props.question_id, () => {
         this.props.getAll && this.props.getAll();
+      }, () => {
+        this.setState({ liked: this.props.liked, num: this.state.num });
       });
-      this.setState({ liked: false, num: this.state.num-1 });
+      this.setState({ liked: false, num: this.props.num-1 });
     } else {
       this.props.like && this.props.like(this.props.question_id, () => {
         this.props.getAll && this.props.getAll();
+      }, () => {
+        this.setState({ liked: false, num: this.props.num });
       });
       this.setState({ liked: true, num: this.state.num+1 });
     }
@@ -63,7 +67,7 @@ const styles = {
 
 const mapDispatch = ({ questions: { getAll, like, dislike } }) => ({
   getAll: () => getAll(),
-  like: (question_id, success_callback) => like({ question_id, success_callback }),
-  dislike: (question_id, success_callback) => dislike({ question_id, success_callback }),
+  like: (question_id, success_callback, fail_callback) => like({ question_id, success_callback, fail_callback }),
+  dislike: (question_id, success_callback, fail_callback) => dislike({ question_id, success_callback, fail_callback }),
 });
 export default connect(null, mapDispatch)(Like);

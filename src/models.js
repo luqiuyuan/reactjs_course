@@ -130,7 +130,7 @@ export const questions = {
       }
       )
     },
-    async like({ question_id, success_callback }, rootState) {
+    async like({ question_id, success_callback, fail_callback }, rootState) {
       const response = await callApi({
         method: 'post',
         uri: `/questions/${question_id}/like`,
@@ -140,9 +140,11 @@ export const questions = {
 
       if (response && response.status == 201) {
        success_callback && success_callback();
+      } else {
+        fail_callback && fail_callback();
       }
     },
-    async dislike({ question_id, success_callback }, rootState) {
+    async dislike({ question_id, success_callback, fail_callback }, rootState) {
       const response = await callApi({
         method: 'delete',
         uri: `/questions/${question_id}/like`,
@@ -152,6 +154,8 @@ export const questions = {
 
       if (response && response.status == 200) {
         success_callback && success_callback();
+      } else {
+        fail_callback && fail_callback();
       }
     }
   }),
