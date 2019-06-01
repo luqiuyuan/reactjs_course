@@ -197,13 +197,28 @@ class Editable extends Component {
         </div>
         {editing
         ? <div style={styles.row_second_editable}>
-            <ButtonSmallPositive label="Save" onClick={this.props.onSave} />
-            <ButtonSmallNegative label="Cancel" style={styles.button_second_editable} />
+            <ButtonSmallPositive
+              label="Save"
+              onClick={this.onPressSave} />
+            <ButtonSmallNegative
+              label="Cancel"
+              style={styles.button_second_editable}
+              onClick={this.onPressCancel} />
           </div>
         : null
         }
       </div>
     );
+  }
+
+  onPressSave = () => {
+    this.props.onSave && this.props.onSave();
+
+    this.setState({ editing: false });
+  }
+
+  onPressCancel = () => {
+    this.setState({ editing: false });
   }
 
 }
