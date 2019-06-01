@@ -24,7 +24,7 @@ export default class Question extends Component {
         className={className}
         style={{ ...styles.container, ...style }}
         onClick={this.onClick}>
-        <Text type='Roboto-Medium' >{title}</Text>
+        <Text type='Roboto-Medium'>{title}</Text>
         <WhiteBlank h={8} />
         <Text style={styles.content}>{content}</Text>
         <WhiteBlank h={8} />
