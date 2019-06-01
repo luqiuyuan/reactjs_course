@@ -6,7 +6,8 @@ import styles from './styles/User';
 import { EditButton, ButtonSmallPositive, ButtonSmallNegative } from '../components/Button';
 import TextInput from '../components/TextInput';
 import validate, {
-  nameLength
+  nameLength,
+  descriptionLength,
 } from '../utils/validations';
 import defaultAvatar from '../assets/imgs/avatar_default.jpg';
 import * as firebase from 'firebase';
@@ -26,10 +27,12 @@ class User extends Component {
 
   static VALIDATIONS = {
     name: [nameLength],
+    description: [descriptionLength],
   }
 
   state = {
     name_err: '',
+    description_err: '',
     input_values: {},
   }
 
@@ -41,7 +44,7 @@ class User extends Component {
       <div style={styles.container}>
         <UserFetcher
           id={id}
-          onFetched={(user) => this.setState({ input_values: {...this.state.input_values, name: user.name} })}>
+          onFetched={(user) => this.setState({ input_values: {...this.state.input_values, name: user.name, description: user.description} })}>
           {
             (user) => <>
               <Avatar
@@ -66,10 +69,26 @@ class User extends Component {
                   }
                   editable={user_token.user_id == id}
                   onSave={this.onSaveName} />
-                <Text>Gender</Text>
-                <Text>{user.gender}</Text>
-                <Text>Short Description</Text>
-                <Text>{user.discription}</Text>
+
+                <Editable
+                  style={styles.editable_description}
+                  childrenNormal={
+                    <>
+                      <Text style={styles.label}>Short Description</Text>
+                      <Text style={styles.content_description}>{user.description}</Text>
+                    </>
+                  }
+                  childrenEditing={
+                    <TextInput
+                      placeholder="Short Description"
+                      value={this.state.input_values.description !== undefined? this.state.input_values.description : user.description}
+                      id="description"
+                      errMsg={this.state['description_err']}
+                      onBlur={this.onBlur}
+                      onChange={this.onChange} />
+                  }
+                  editable={user_token.user_id == id}
+                  onSave={this.onSaveDescription} />
               </div>
             </>
           }
@@ -80,7 +99,7 @@ class User extends Component {
 
   // trigger when user typing words
   onChange = ({ target: { id, value } }) => {
-    this.setState({ input_values: {...this.state.input_values, name: value} });
+    this.setState({ input_values: {...this.state.input_values, [id]: value} });
     // Reset the error message when user typing
     if (this.state[id + '_err']) {
       this.setState({ [id + '_err']: '' })
@@ -114,6 +133,23 @@ class User extends Component {
     }
   }
 
+  onSaveDescription = () => {
+    // validate each input, get error message
+    let _errMsgs = {}
+    Object.keys(User.VALIDATIONS).forEach((id) => {
+      if (User.VALIDATIONS[id]) {
+        _errMsgs[id + '_err'] = validate(User.VALIDATIONS[id], this.state.input_values[id]);
+      }
+    });
+
+    // only try to setState when there are validation errors
+    if (this._checkErr(_errMsgs)) {
+      this.setState(_errMsgs)
+    } else {
+      this.props.update && this.props.update({ description: this.state.input_values.description });
+    }
+  }
+
   // check if there is a error message
   _checkErr = obj => {
     // traverse the obj, if there is any valid error message, return true
@@ -141,12 +177,12 @@ class Editable extends Component {
   }
 
   render() {
-    const { editable } = this.props;
+    const { editable, style } = this.props;
     const { hovered, editing } = this.state;
 
     return (
       <div
-        style={styles.container_editable}
+        style={{...styles.container_editable, ...style}}
         onMouseEnter={() => this.setState({ hovered: true })}
         onMouseLeave={() => this.setState({ hovered: false })}>
         <div style={styles.row_first_editable}>

@@ -35,7 +35,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
 
   row_second_editable: {
@@ -75,6 +75,10 @@ const styles = {
     top: -36,
   },
 
+  editable_description: {
+    marginTop: 50,
+  },
+
   overlay: {
     // styling self
     position: 'absolute',
@@ -95,6 +99,15 @@ const styles = {
 
   text_avatar: {
     marginTop: 49,
+  },
+
+  label: {
+    width: 270,
+  },
+
+  content_description: {
+    maxWidth: 290,
+    overflowWrap: 'break-word',
   },
 
 };

@@ -70,6 +70,11 @@ export const passwordLength = makeValidateLength(6, 15)
 export const nameLength = makeValidateLength(0, 200)
 
 /**
+ * valid description length
+ */
+export const descriptionLength = makeValidateLength(0, 60)
+
+/**
  * valid password equivalence
  */
 export const passwordConfirmation = (password) => new Validation(
@@ -97,7 +102,13 @@ export const questionContentLength = makeValidateLength(0, 65535)
 export function makeValidateLength(min_len, max_len) {
   return new Validation(
     'input_length',
-    text => text.length >= min_len && text.length <= max_len,
+    text => {
+      if (text === undefined || text === null) {
+        text = "";
+      }
+
+      return text.length >= min_len && text.length <= max_len;
+    },
     `Input has to be ${min_len}-${max_len} letters`
   )
 }
