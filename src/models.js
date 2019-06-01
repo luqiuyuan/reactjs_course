@@ -7,6 +7,9 @@ export const user_token = {
   reducers: {
     set(state, payload) {
       return payload;
+    },
+    remove(state, payload) {
+      return null;
     }
   },
   effects: (dispatch) => ({
@@ -35,7 +38,14 @@ export const user_token = {
           }
         }
       })
-
+    },
+    destroy(success_callback) {
+      // Destroy user_token from redux store
+      dispatch.user_token.remove();
+      // Clear all from local storage
+      localStorage.clear();
+      // Call success callback after destroying user_token
+      success_callback && success_callback();
     }
   }),
 };

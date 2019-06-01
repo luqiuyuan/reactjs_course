@@ -55,6 +55,7 @@ class User extends Component {
                 onUploaded={this.props.update} />
               <div style={styles.info}>
                 <Editable
+                  style={styles.editable_name}
                   childrenNormal={
                     <Text type="xl">{user.name}</Text>
                   }
@@ -74,7 +75,7 @@ class User extends Component {
                   style={styles.editable_description}
                   childrenNormal={
                     <>
-                      <Text style={styles.label}>Short Description</Text>
+                      <Text style={styles.label_description}>Short Description</Text>
                       <Text style={styles.content_description}>{user.description}</Text>
                     </>
                   }
@@ -89,6 +90,8 @@ class User extends Component {
                   }
                   editable={user_token.user_id == id}
                   onSave={this.onSaveDescription} />
+
+                <LogoutButtonContainer />
               </div>
             </>
           }
@@ -262,3 +265,20 @@ class Avatar extends Component {
   }
 
 }
+
+function LogoutButton(props) {
+  return (
+    <div
+      style={{...styles.container_logout_button, ...props.style}}
+      onClick={props.logout}>
+      <img
+        style={styles.icon_logout}
+        src={require('../assets/imgs/icons/logout.svg')} />
+      <Text type="red" style={styles.label_logout}>Logout</Text>
+    </div>
+  );
+}
+const mapDispatchLogoutButton = ({ user_token: { destroy } }) => ({
+  logout: () => destroy(),
+});
+const LogoutButtonContainer = connect(null, mapDispatchLogoutButton)(LogoutButton);

@@ -35,7 +35,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
 
   row_second_editable: {
@@ -75,6 +75,10 @@ const styles = {
     top: -36,
   },
 
+  editable_name: {
+    marginTop: 24,
+  },
+
   editable_description: {
     marginTop: 50,
   },
@@ -101,13 +105,34 @@ const styles = {
     marginTop: 49,
   },
 
-  label: {
+  label_description: {
     width: 270,
   },
 
   content_description: {
     maxWidth: 290,
     overflowWrap: 'break-word',
+  },
+
+  container_logout_button: {
+    // styling self
+    cursor: 'pointer',
+    marginTop: 50,
+    marginBottom: 24,
+    // styling children
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+
+  icon_logout: {
+    width: 26,
+    height: 25,
+  },
+
+  label_logout: {
+    marginLeft: 15,
   },
 
 };
