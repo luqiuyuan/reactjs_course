@@ -26,7 +26,7 @@ export default class Question extends Component {
         onClick={this.onClick}>
         <Text type='Roboto-Medium' >{title}</Text>
         <WhiteBlank h={8} />
-        <Text>{content}</Text>
+        <Text style={styles.content}>{content}</Text>
         <WhiteBlank h={8} />
         {numOfLikes !== undefined && <Like question_id={id} num={numOfLikes} liked={liked} />}
       </div>

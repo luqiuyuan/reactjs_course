@@ -7,6 +7,10 @@ const styles = {
     justifyContent: 'flex-start',
   },
 
+  content: {
+    overflowWrap: 'break-word',
+  },
+
 };
 
 export default styles;
